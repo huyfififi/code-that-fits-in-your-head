@@ -12,3 +12,5 @@ def test_post_valid_reservation_when_database_is_empty():
         "name": "Kazuki Yoshida",
         "quantity": 4,
     }
+    response = client.post("/api/v1/reservations", json=params)
+    assert response.status_code == 201
