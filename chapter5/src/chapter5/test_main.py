@@ -1,7 +1,9 @@
+import pydantic
+import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
 
-from .main import app
+from .main import app, Reservation
 
 client = TestClient(app)
 
@@ -68,3 +70,17 @@ def test_post_invalid_reservation():
     for data in test_data:
         response = client.post("/api/v1/reservations", json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_quaitity_must_be_positive():
+    test_data = [0, -1]  # boundary testing
+    for invalid_quantity in test_data:
+        with pytest.raises(pydantic.ValidationError):
+            Reservation(
+                **{
+                    "at": "2024-08-19 11:30",
+                    "email": "mail@example.com",
+                    "name": "Marie Ilsoe",
+                    "quantity": invalid_quantity,
+                }
+            )

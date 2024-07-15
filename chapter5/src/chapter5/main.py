@@ -9,7 +9,7 @@ from fastapi import (
 )
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
@@ -24,7 +24,7 @@ class Reservation(BaseModel):
     at: str
     email: str
     name: Union[str, None]  # FastAPI documents suggest Union instead of Optional
-    quantity: int
+    quantity: int = Field(gt=0)
 
 
 class InsertResult:
