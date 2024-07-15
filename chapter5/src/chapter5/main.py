@@ -27,19 +27,28 @@ class Reservation(BaseModel):
     quantity: int
 
 
+class InsertResult:
+    def __init__(self, success: bool = False, err_msg: Optional[str] = None):
+        self.success = success
+        self.err_msg = err_msg
+
+
 class FakeDatabase:
     def __init__(self):
         self.collection = {"reservations": []}
 
     def post(self, reservation: Reservation) -> tuple[bool, Optional[str]]:
         # null validation is already done by Pydantic
+
         try:
             datetime.strptime(reservation.at, "%Y-%m-%d %H:%M")
         except ValueError:
-            return False, f"malformed datetime {reservation.at}"
+            return InsertResult(False, f"datetime {reservation.at} is malformed.")
+        if reservation.quantity <= 0:
+            return InsertResult(False, "`quantity` must be greater than 0.")
 
         self.collection["reservations"].append(reservation)
-        return True, None
+        return InsertResult(True, None)
 
 
 db = FakeDatabase()
@@ -58,10 +67,10 @@ async def post_reservation(
     reservation: Reservation,
     db: FakeDatabase = Depends(get_database),
 ):
-    success, err_msg = db.post(reservation)
-    if not success:
+    result = db.post(reservation)
+    if not result.success:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=err_msg,
+            detail=result.err_msg,
         )
     return reservation

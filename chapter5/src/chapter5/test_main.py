@@ -46,6 +46,18 @@ def test_post_invalid_reservation():
             "name": "Thora",
             "quantity": 19,
         },
+        {
+            "at": "2022-01-02 12:10",
+            "email": "3@example.org",
+            "name": "3 Beard",
+            "quantity": 0,
+        },
+        {
+            "at": "2045-12-31 11:45",
+            "email": "git@example.com",
+            "name": "Gil Tan",
+            "quantity": -1,
+        },
     ]
     for data in test_data:
         response = client.post("/api/v1/reservations", json=data)
