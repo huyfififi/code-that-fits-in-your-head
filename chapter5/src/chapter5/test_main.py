@@ -34,6 +34,13 @@ def test_post_invalid_reservation():
             "name": "Jay Xerxes",
             "quantity": 1,
         },
+        # TODO: Add validation on `at` format
+        {
+            "at": "2023-11-30 20:01",
+            "email": None,
+            "name": "Thora",
+            "quantity": 19,
+        },
     ]
     for data in test_data:
         response = client.post("/api/v1/reservations", json=data)
