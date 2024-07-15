@@ -20,6 +20,12 @@ def test_post_valid_reservation_when_database_is_empty():
             "name": "Xenia Ng",
             "quantity": 9,
         },
+        {
+            "at": "2023-08-23 16:55",
+            "email": "kite@example.edu",
+            "name": None,
+            "quantity": 2,
+        },
     ]
     for data in test_data:
         response = client.post("/api/v1/reservations", json=data)

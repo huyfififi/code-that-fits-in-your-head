@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 
 from fastapi import (
     Depends,
@@ -23,14 +23,20 @@ async def validation_exception_handler(request, exc):
 class Reservation(BaseModel):
     at: str
     email: str
-    name: str
+    name: Union[str, None]  # FastAPI documents suggest Union instead of Optional
     quantity: int
 
 
 class InsertResult:
-    def __init__(self, success: bool = False, err_msg: Optional[str] = None):
+    def __init__(
+        self,
+        success: bool = False,
+        err_msg: Optional[str] = None,
+        record=None,
+    ):
         self.success = success
         self.err_msg = err_msg
+        self.record = record
 
 
 class FakeDatabase:
@@ -43,12 +49,19 @@ class FakeDatabase:
         try:
             datetime.strptime(reservation.at, "%Y-%m-%d %H:%M")
         except ValueError:
-            return InsertResult(False, f"datetime {reservation.at} is malformed.")
+            return InsertResult(
+                False,
+                f"datetime {reservation.at} is malformed.",
+                None,
+            )
         if reservation.quantity <= 0:
-            return InsertResult(False, "`quantity` must be greater than 0.")
+            return InsertResult(False, "`quantity` must be greater than 0.", None)
+
+        if reservation.name is None:
+            reservation.name = ""
 
         self.collection["reservations"].append(reservation)
-        return InsertResult(True, None)
+        return InsertResult(True, None, reservation)
 
 
 db = FakeDatabase()
