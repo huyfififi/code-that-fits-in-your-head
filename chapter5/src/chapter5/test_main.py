@@ -34,7 +34,12 @@ def test_post_invalid_reservation():
             "name": "Jay Xerxes",
             "quantity": 1,
         },
-        # TODO: Add validation on `at` format
+        {
+            "at": "not a date",
+            "email": "w@example.edu",
+            "name": "Wk Hd",
+            "quantity": 8,
+        },
         {
             "at": "2023-11-30 20:01",
             "email": None,

@@ -1,4 +1,12 @@
-from fastapi import FastAPI, status
+from datetime import datetime
+from typing import Optional
+
+from fastapi import (
+    Depends,
+    FastAPI,
+    HTTPException,
+    status,
+)
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
@@ -19,10 +27,41 @@ class Reservation(BaseModel):
     quantity: int
 
 
+class FakeDatabase:
+    def __init__(self):
+        self.collection = {"reservations": []}
+
+    def post(self, reservation: Reservation) -> tuple[bool, Optional[str]]:
+        # null validation is already done by Pydantic
+        try:
+            datetime.strptime(reservation.at, "%Y-%m-%d %H:%M")
+        except ValueError:
+            return False, f"malformed datetime {reservation.at}"
+
+        self.collection["reservations"].append(reservation)
+        return True, None
+
+
+db = FakeDatabase()
+
+
+def get_database() -> FakeDatabase:
+    return db
+
+
 @app.post(
     "/api/v1/reservations/",
     response_model=Reservation,
     status_code=status.HTTP_201_CREATED,
 )
-async def post_reservation(reservation: Reservation):
+async def post_reservation(
+    reservation: Reservation,
+    db: FakeDatabase = Depends(get_database),
+):
+    success, err_msg = db.post(reservation)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=err_msg,
+        )
     return reservation
