@@ -6,11 +6,20 @@ client = TestClient(app)
 
 
 def test_post_valid_reservation_when_database_is_empty():
-    params = {
-        "at": "2024-07-13T14:35:00.123Z",
-        "email": "kazuki@example.com",
-        "name": "Kazuki Yoshida",
-        "quantity": 4,
-    }
-    response = client.post("/api/v1/reservations", json=params)
-    assert response.status_code == 201
+    inline_data = [
+        {
+            "at": "2023-11-24 19:00",
+            "email": "juliad@example.net",
+            "name": "Julia Domna",
+            "quantity": 5,
+        },
+        {
+            "at": "2024-02-13 18:15",
+            "email": "x@example.com",
+            "name": "Xenia Ng",
+            "quantity": 9,
+        },
+    ]
+    for data in inline_data:
+        response = client.post("/api/v1/reservations", json=data)
+        assert response.status_code == 201
