@@ -76,7 +76,7 @@ def get_database() -> FakeDatabase:
     response_model=Reservation,
     status_code=status.HTTP_201_CREATED,
 )
-async def post_reservation(
+def post_reservation(
     reservation: Reservation,
     db: FakeDatabase = Depends(get_database),
 ):
