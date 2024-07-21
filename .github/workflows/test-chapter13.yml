@@ -1,4 +1,4 @@
-name: Chapter 5 Testing
+name: Chapter 13 Testing
 
 on: push
 
@@ -14,15 +14,15 @@ jobs:
         with:
           python-version: 3.12
           cache: 'pip'
-          cache-dependency-path: chapter5/requirements-dev.lock
+          cache-dependency-path: chapter13/requirements-dev.lock
 
       - name: Upgrade pip
         run: python -m pip install --upgrade pip
 
       - name: Install dependencies
         run: pip install -r requirements-dev.lock
-        working-directory: chapter5
+        working-directory: chapter13
 
       - name: Run Tests
-        run: pytest
-        working-directory: chapter5
+        run: pytest src/chapter13/main.py
+        working-directory: chapter13
