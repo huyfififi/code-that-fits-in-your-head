@@ -5,7 +5,11 @@ description = "Add your description here"
 authors = [
     { name = "Kazuki Kijima", email = "kazukiyoshida96@gmail.com" }
 ]
-dependencies = []
+dependencies = [
+    "pytest>=8.3.1",
+    "pydantic>=2.8.2",
+    "pytest-mock>=3.14.0",
+]
 readme = "README.md"
 requires-python = ">= 3.8"
 
